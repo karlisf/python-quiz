@@ -133,6 +133,83 @@ pre.code{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;borde
 /* Each question: lvl, q (question text), code, given (optional: what the user types),
    opts: [text, isCorrect, explanation], out: actual output / value, note: optional extra tip */
 const SUBJECTS = [
+{ id:"variables", name:"Variables", blurb:"names, values, and why = is not math", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`a = 5
+print(a)`, opts:[
+  ["5", true, "Read the first line as \"a gets 5\": the value 5 is stored under the name `a`. `print(a)` looks up that name and shows the value stored there."],
+  ["a", false, "Without quotes, `a` is a name, so Python prints the value stored under it. To print the letter itself, write `print(\"a\")`."],
+  ["a = 5", false, "`print` shows the value, not the line that stored it."],
+  ["Error", false, "`a` got a value on the line before, so Python knows the name."]],
+  out:"5",
+  note:"Read `=` as \"gets\": `a = 5` is \"a gets 5\". In Python, `=` is an action (store this value), not a statement that two things are equal like in math."},
+ {lvl:"trivial", q:"Now with quotes. What does this print?", code:`a = 5
+print("a")`, opts:[
+  ["a", true, "With quotes, `\"a\"` is just text: the letter a. It has nothing to do with the variable `a`."],
+  ["5", false, "That is `print(a)` without quotes. Quotes turn it into text."],
+  ["\"a\"", false, "The quotes only mark where the text starts and ends. They are not printed."],
+  ["Error", false, "Printing any text is fine."]],
+  out:"a"},
+ {lvl:"trivial", q:"A new value for the same name. What does this print?", code:`name = "Ann"
+name = "Bob"
+print(name)`, opts:[
+  ["Bob", true, "A variable holds one value at a time. `name = \"Bob\"` throws away `\"Ann\"` and stores `\"Bob\"` instead."],
+  ["Ann", false, "The second line replaces the first value."],
+  ["Ann Bob", false, "A variable does not collect values; it keeps only the latest one."],
+  ["AnnBob", false, "`=` stores a new value. It does not join it to the old one."]],
+  out:"Bob"},
+ {lvl:"simple", q:"In math you would solve this for a. What does Python do?", code:`7 + a = 9
+print(a)`, opts:[
+  ["SyntaxError", true, "Python never solves equations. The left side of `=` must be a single name to store into, and `7 + a` is not a name. Python checks the whole program before running it, so it stops here and prints nothing."],
+  ["2", false, "That is the math answer. In Python `=` means \"store\", not \"is equal\", and Python does not search for unknown values."],
+  ["9", false, "Python does not store 9 into `a` either: the left side is not a plain name."],
+  ["NameError", false, "A NameError would come while the program runs. This line is rejected before anything runs, because it is not valid Python at all."]],
+  out:"SyntaxError: cannot assign to expression here. Maybe you meant '==' instead of '='?",
+  note:"To get the math answer, you do the solving and Python does the arithmetic: `a = 9 - 7`."},
+ {lvl:"simple", q:"The name is on the right. What happens?", code:`5 = x`, opts:[
+  ["SyntaxError", true, "The name that receives the value must be on the left. `x = 5` means \"x gets 5\"; `5 = x` would mean \"5 gets x\", which makes no sense."],
+  ["x becomes 5", false, "In math, `5 = x` and `x = 5` say the same thing. In Python the direction matters: the right side is worked out, and the name on the left receives it."],
+  ["True", false, "`=` stores; it does not compare. Comparing is `==`."],
+  ["Nothing happens", false, "Python reports an error for this line."]],
+  out:"SyntaxError: cannot assign to literal here. Maybe you meant '==' instead of '='?"},
+ {lvl:"simple", q:"The lines are in this order. What happens?", code:`print(a)
+a = 3`, opts:[
+  ["NameError", true, "Python runs lines from top to bottom. When line 1 runs, nothing has been stored in `a` yet, so Python does not know that name."],
+  ["3", false, "Python does not look ahead. Line 2 has not run yet when line 1 runs."],
+  ["a", false, "Without quotes, `a` is a name, not text."],
+  ["0", false, "A variable does not start at 0. It does not exist at all until a value is stored in it."]],
+  out:"NameError: name 'a' is not defined"},
+ {lvl:"non-advanced", q:"In math, a = a + 1 is impossible. What does Python print?", code:`a = 2
+a = a + 1
+print(a)`, opts:[
+  ["3", true, "Read line 2 as \"a gets a + 1\". Python first works out the right side with the current value (2 + 1 = 3), then stores the result back in `a`."],
+  ["2", false, "Line 2 changes `a`."],
+  ["Error", false, "This is one of the most common lines in programming. It is only impossible as a math equation."],
+  ["a + 1", false, "Python works out the right side and stores the result, not the formula."]],
+  out:"3"},
+ {lvl:"non-advanced", q:"a changes after b was set. What does this print?", code:`a = 3
+b = a + 1
+a = 10
+print(b)`, opts:[
+  ["4", true, "`b = a + 1` is worked out once, when that line runs: 3 + 1 = 4. Changing `a` later does not update `b`. A variable stores a value, not a formula."],
+  ["11", false, "That would be right in math, where `b = a + 1` is a rule that always holds. In Python it is a one-time calculation."],
+  ["3", false, "`b` got `a + 1`, not `a`."],
+  ["10", false, "`b` is not linked to `a`; it only got a value from it once."]],
+  out:"4"},
+ {lvl:"non-advanced", q:"One = or two? What does this print?", code:`x = 5
+print(x == 6)
+print(x)`, opts:[
+  ["False\n5", true, "`x == 6` asks \"is x equal to 6?\" and the answer is False. Asking does not change `x`, so it is still 5. One `=` stores; two `==` compare."],
+  ["True\n6", false, "`==` does not store anything; it only compares."],
+  ["False\n6", false, "Comparing does not change `x`."],
+  ["6\n6", false, "`x == 6` gives True or False, not a number."]],
+  out:"False\n5"},
+ {lvl:"mixed", q:"This is a math equation. Which Python code prints the value of a?", code:`7 + a = 9`, opts:[
+  ["a = 9 - 7\nprint(a)", true, "You do the solving (take 7 away from both sides), and Python does the arithmetic: it works out `9 - 7` and stores 2 in `a`."],
+  ["7 + a = 9\nprint(a)", false, "Python does not solve equations, so this is a SyntaxError."],
+  ["a == 9 - 7\nprint(a)", false, "`==` compares instead of storing. `a` never gets a value, so this is a NameError."],
+  ["9 - 7 = a\nprint(a)", false, "The name must be on the left of `=`. This is a SyntaxError."]],
+  out:"2"}
+]},
 { id:"values", name:"Values and types", blurb:"int, str, float, single characters", qs:[
  {lvl:"trivial", q:"What does this print?", code:`x = 5
 print(type(x))`, opts:[
@@ -987,7 +1064,7 @@ function renderNav(){
     S.qs.forEach((Q,i)=>{const a=state.answers[qid(s,i)]; let c=""; if(a!==undefined){n++; if(Q.opts[a][1]){ok++;c="ok";}else c="bad";} dots+=`<i class="${c}"></i>`;});
     const b=document.createElement("button");
     if(s===state.subj && !state.showSummary) b.classList.add("active");
-    b.innerHTML=`<span class="nm">${s+1}. ${esc(S.name)}</span><span class="meta">${esc(S.blurb)} · ${ok}/${n}</span><span class="dots">${dots}</span>`;
+    b.innerHTML=`<span class="nm">${s}. ${esc(S.name)}</span><span class="meta">${esc(S.blurb)} · ${ok}/${n}</span><span class="dots">${dots}</span>`;
     b.onclick=()=>{state.subj=s; state.idx=firstUnanswered(s); state.showSummary=false; save(); render();};
     nav.appendChild(b);
   });

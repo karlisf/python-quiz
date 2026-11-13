@@ -133,7 +133,7 @@ pre.code{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;borde
 /* Each question: lvl, q (question text), code, given (optional: what the user types),
    opts: [text, isCorrect, explanation], out: actual output / value, note: optional extra tip */
 const SUBJECTS = [
-{ name:"Values and types", blurb:"int, str, float, single characters", qs:[
+{ id:"values", name:"Values and types", blurb:"int, str, float, single characters", qs:[
  {lvl:"trivial", q:"What does this print?", code:`x = 5
 print(type(x))`, opts:[
   ["<class 'int'>", true, "`5` is a whole number written without quotes, so Python stores it as an `int`."],
@@ -203,7 +203,7 @@ print(a == c, a == b)`, opts:[
   ["False True", false, "Both parts are reversed. Numbers compare by value; numbers and strings are never equal."]],
   out:"True False"}
 ]},
-{ name:"Operations", blurb:"+ - * / // % and type mismatches", qs:[
+{ id:"operations", name:"Operations", blurb:"+ - * / // % and type mismatches", qs:[
  {lvl:"trivial", q:"What does this print?", code:`print(7 + 3)`, opts:[
   ["10", true, "Two `int`s added give an `int`."],
   ["73", false, "Joining digits happens only with strings: `\"7\" + \"3\"`."],
@@ -266,7 +266,7 @@ print(a == c, a == b)`, opts:[
   out:"TypeError: can only concatenate str (not \"int\") to str",
   note:"Fix it by converting: `int(\"5\") + 5` gives `10`, `\"5\" + str(5)` gives `55`."}
 ]},
-{ name:"Casting", blurb:"int(), str(), float() conversions", qs:[
+{ id:"casting", name:"Casting", blurb:"int(), str(), float() conversions", qs:[
  {lvl:"trivial", q:"What does this print?", code:`x = int("42")
 print(x + 1)`, opts:[
   ["43", true, "`int(\"42\")` turns the text into the number 42, so normal arithmetic works."],
@@ -333,7 +333,7 @@ print(a + b, int(a) + int(b))`, opts:[
   ["3.9", false, "The outer `int()` removes the decimal part."]],
   out:"3"}
 ]},
-{ name:"Logical operations", blurb:"and, or, not, parentheses", qs:[
+{ id:"logic", name:"Logical operations", blurb:"and, or, not, parentheses", qs:[
  {lvl:"trivial", q:"What does this print?", code:`print(True and False)`, opts:[
   ["False", true, "`and` is `True` only if both sides are `True`."],
   ["True", false, "That would need `or`, or both sides `True`."],
@@ -399,7 +399,7 @@ print(x > 5 and not (x % 2 == 0))`, opts:[
   ["Error", false, "This is valid code."]],
   out:"True"}
 ]},
-{ name:"input() and print()", blurb:"reading text, sep, end", qs:[
+{ id:"input-print", name:"input() and print()", blurb:"reading text, sep, end", qs:[
  {lvl:"trivial", q:"What does this print?", code:`print("Hello", "World")`, opts:[
   ["Hello World", true, "With several arguments, `print` puts one space between them by default."],
   ["HelloWorld", false, "That is `print(\"Hello\" + \"World\")`. The comma version adds a space."],
@@ -467,7 +467,7 @@ print(int(a) + int(b), a + b)`, given:"User types: 2 (Enter), then 3 (Enter)", o
   ["TypeError", false, "Each `+` has the same type on both sides."]],
   out:"2\n3\n5 23"}
 ]},
-{ name:"Tracing variables", blurb:"what does x hold after several steps?", qs:[
+{ id:"tracing", name:"Tracing variables", blurb:"what does x hold after several steps?", qs:[
  {lvl:"trivial", q:"What does this print?", code:`x = 5
 x = 8
 print(x)`, opts:[
@@ -558,7 +558,7 @@ print(x)`, opts:[
   ["TypeError", false, "Every step converts first, so the types always match."]],
   out:"66"}
 ]},
-{ name:"if, elif, else", blurb:"choosing which code runs", qs:[
+{ id:"if-elif-else", name:"if, elif, else", blurb:"choosing which code runs", qs:[
  {lvl:"trivial", q:"What does this print?", code:`x = 10
 if x > 5:
     print("big")
@@ -665,7 +665,7 @@ print(x)`, opts:[
   ["3", false, "That would be 4 − 1. But x was doubled to 8 first."]],
   out:"7"}
 ]},
-{ name:"for loops and range()", blurb:"repeating code a set number of times", qs:[
+{ id:"for-range", name:"for loops and range()", blurb:"repeating code a set number of times", qs:[
  {lvl:"trivial", q:"What does this print?", code:`for i in range(3):
     print(i)`, opts:[
   ["0\n1\n2", true, "`range(3)` gives 3 numbers starting at 0: 0, 1, 2. The loop body runs once for each of them."],
@@ -739,7 +739,7 @@ for i in range(len(word)):
   ["IndexError", false, "`range(len(word))` stops at 2, which is the last valid index. That is exactly why this pattern is safe."]],
   out:"0 a\n1 b\n2 c"}
 ]},
-{ name:"while loops", blurb:"repeating while a condition holds, break, continue", qs:[
+{ id:"while", name:"while loops", blurb:"repeating while a condition holds, break, continue", qs:[
  {lvl:"trivial", q:"What does this print?", code:`n = 1
 while n <= 3:
     print(n)
@@ -838,7 +838,7 @@ print(total)`, given:"User types: 4, 5, stop (Enter after each)", opts:[
   ["4", false, "The loop reads a new line at the end of each pass, so 5 is added too."]],
   out:"4\n5\nstop\n9"}
 ]},
-{ name:"Loop patterns", blurb:"sum, count, build text; review of all", qs:[
+{ id:"loop-patterns", name:"Loop patterns", blurb:"sum, count, build text; review of all", qs:[
  {lvl:"trivial", q:"Adding up. What does this print?", code:`total = 0
 for i in range(1, 4):
     total += i
@@ -939,10 +939,31 @@ print(num + "!", total)`, given:"User types: 507", opts:[
 const LETTERS = ["A","B","C","D"];
 const TOTAL_Q = SUBJECTS.reduce((n,S)=>n+S.qs.length,0);
 document.getElementById("subjCount").textContent = SUBJECTS.length;
-const STORE_KEY = "pyquiz.v1";
+/* Saved answers are keyed by subject id + question number ("casting-3"), so subjects
+   can be added or reordered without mixing up saved progress. The current subject is
+   saved by id too. Version 1 keyed everything by subject position; it is migrated once. */
+const STORE_KEY = "pyquiz.v2", OLD_KEY = "pyquiz.v1";
+const V1_ORDER = ["values","operations","casting","logic","input-print","tracing","if-elif-else","for-range","while","loop-patterns"];
 let state = { subj:0, idx:0, answers:{}, seconds:0, showSummary:false };
-try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s && s.answers) state = Object.assign(state, s); } catch(e){}
-function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
+function subjIndex(id){ const i=SUBJECTS.findIndex(S=>S.id===id); return i<0?0:i; }
+try {
+  let s = JSON.parse(localStorage.getItem(STORE_KEY));
+  if (!s) {
+    const old = JSON.parse(localStorage.getItem(OLD_KEY));
+    if (old && old.answers) {
+      const answers={};
+      for (const k in old.answers){ const [si,qi]=k.split("-"); if (V1_ORDER[si]) answers[V1_ORDER[si]+"-"+qi]=old.answers[k]; }
+      s = Object.assign({}, old, {answers, subjId:V1_ORDER[old.subj]||V1_ORDER[0]});
+    }
+  }
+  if (s && s.answers) {
+    state = Object.assign(state, s);
+    state.subj = subjIndex(s.subjId);
+    if (state.idx >= SUBJECTS[state.subj].qs.length) state.idx = 0;
+    save();  // writes the v2 save right away when this load migrated a v1 save
+  }
+} catch(e){}
+function save(){ try { state.subjId = SUBJECTS[state.subj].id; localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
 
 const orders = {};
 function order(id, n){
@@ -951,7 +972,7 @@ function order(id, n){
 }
 const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
 const rich = s => esc(s).replace(/`([^`]+)`/g,"<code>$1</code>");
-const qid = (s,i) => s+"-"+i;
+const qid = (s,i) => SUBJECTS[s].id+"-"+i;
 
 function totals(){
   let ok=0,n=0;

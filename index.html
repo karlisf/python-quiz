@@ -116,7 +116,7 @@ pre.code{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;borde
   <header class="top">
     <div>
       <h1>Python basics <span class="py">practice quiz</span></h1>
-      <p class="sub">7 subjects, 10 questions each, from trivial to mixed. Pick an answer to see why each choice is right or wrong.</p>
+      <p class="sub"><span id="subjCount"></span> subjects, 10 questions each, from trivial to mixed. Pick an answer to see why each choice is right or wrong.</p>
     </div>
     <div class="stats">
       <span>Score <b id="score">0</b> / <span id="answeredCount">0</span></span>
@@ -668,6 +668,8 @@ print(x)`, opts:[
 ];
 
 const LETTERS = ["A","B","C","D"];
+const TOTAL_Q = SUBJECTS.reduce((n,S)=>n+S.qs.length,0);
+document.getElementById("subjCount").textContent = SUBJECTS.length;
 const STORE_KEY = "pyquiz.v1";
 let state = { subj:0, idx:0, answers:{}, seconds:0, showSummary:false };
 try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s && s.answers) state = Object.assign(state, s); } catch(e){}
@@ -762,7 +764,7 @@ function renderSummary(){
   });
   const t=totals();
   document.getElementById("main").innerHTML=`<section class="summary"><h2>Results</h2>
-  <p>You answered ${t.n} of 70 questions and got <b>${t.ok}</b> right in ${fmt(state.seconds)}.</p>
+  <p>You answered ${t.n} of ${TOTAL_Q} questions and got <b>${t.ok}</b> right in ${fmt(state.seconds)}.</p>
   <div class="tablewrap"><table><thead><tr><th>Subject</th>${lv.map(l=>`<th class="n">${l}</th>`).join("")}<th class="n">Total</th></tr></thead><tbody>${rows}</tbody></table></div>
   <p class="note">Weak spot? Click that subject on the left to review it — your answers and the explanations stay visible.</p>
   <div class="navrow"><button class="btn" id="back">Back to questions</button><button class="btn primary" id="again">Start over</button></div></section>`;

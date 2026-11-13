@@ -79,13 +79,18 @@ Repetition is written into the questions themselves:
 - Learners who know `=` from math read `7 + a = 9` as an equation to solve, where `a` is an unknown.
 - In Python, `=` stores a value under a name, and the value is always known.
 - Subject 0 targets this directly. It is read aloud as "gets": `a = 5` is "a gets 5".
-- Its questions show exactly where math and Python differ:
-  - Python does not solve `7 + a = 9`; it reports a SyntaxError.
-  - The name must be on the left.
+- Its questions stay on the basic idea of a name holding a value:
+  - A name without quotes gives its value; `"a"` in quotes is just text.
+  - A name holds one value; a new value replaces the old one.
+  - `a = 1 + 2` stores the result, 3, not the calculation.
+  - The name must be on the left: `5 = x` is an error.
   - Lines run top to bottom, so a name cannot be used before it gets a value.
-  - `a = a + 1` is normal.
-  - `b = a + 1` is computed once; changing `a` later does not change `b`.
-  - `=` stores and `==` compares.
+  - `b = a` gives `b` the value of `a`.
+  - Using a variable in a calculation (`print(a + 2)`) does not change it; only `=` does.
+  - A name is only a label: `red = "blue"` prints `blue`.
+  - The last question turns `7 + a = 9` into working code: you solve it, Python computes `a = 9 - 7`.
+- Changing variables step by step (`a = a + 1`) is left to subject 6, Tracing variables. Comparing with `==` is left to subject 4, Logical operations.
+- The first questions have no "Error" option, because a beginner has no idea yet what an error would be.
 - Away from the screen, the same ideas work with labelled cups and paper slips. Each cup holds one slip. Storing a new value means throwing the old slip away. `b = a` means writing a copy, not connecting the cups.
 
 ### 8. Plain language for beginners

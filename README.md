@@ -4,7 +4,7 @@ A multiple-choice quiz for people who are learning to code for the first time, u
 
 Live version: https://karlisf.github.io/python-quiz/
 
-- 10 subjects, 10 questions each, 100 questions in total.
+- 11 subjects (numbered 0–10), 10 questions each, 110 questions in total.
 - Everything is in one static file, `index.html`. There is no build step, no server and no external libraries.
 - Progress (answers, time spent) is saved in the learner's own browser (`localStorage`). Nothing is sent anywhere.
 
@@ -12,6 +12,7 @@ Live version: https://karlisf.github.io/python-quiz/
 
 | # | Subject | Covers |
 |---|---------|--------|
+| 0 | Variables | names and values; why `=` is not the `=` from math |
 | 1 | Values and types | `int`, `str`, `float`, single characters, indexing |
 | 2 | Operations | `+ - * / // %`, mixing types |
 | 3 | Casting | `int()`, `str()`, `float()` |
@@ -74,7 +75,20 @@ Repetition is written into the questions themselves:
 - **Mixed questions**: the last question of each subject combines it with earlier subjects.
 - **Loop patterns** (subject 10) is mostly review: loops used together with `if`, `%`, casting, `input()` and string building.
 
-### 7. Plain language for beginners
+### 7. `=` is taught as an action, not as math
+- Learners who know `=` from math read `7 + a = 9` as an equation to solve, where `a` is an unknown.
+- In Python, `=` stores a value under a name, and the value is always known.
+- Subject 0 targets this directly. It is read aloud as "gets": `a = 5` is "a gets 5".
+- Its questions show exactly where math and Python differ:
+  - Python does not solve `7 + a = 9`; it reports a SyntaxError.
+  - The name must be on the left.
+  - Lines run top to bottom, so a name cannot be used before it gets a value.
+  - `a = a + 1` is normal.
+  - `b = a + 1` is computed once; changing `a` later does not change `b`.
+  - `=` stores and `==` compares.
+- Away from the screen, the same ideas work with labelled cups and paper slips. Each cup holds one slip. Storing a new value means throwing the old slip away. `b = a` means writing a copy, not connecting the cups.
+
+### 8. Plain language for beginners
 - Short sentences.
 - Python terms are introduced in the questions where they are used.
 - No assumed knowledge of other programming languages. Where another language behaves differently (Python has no `char` type), it is said directly.
@@ -94,6 +108,7 @@ Questions live in the `SUBJECTS` array in `index.html`:
   note:"Optional extra tip."}   // optional
 ```
 
+- Each subject has an `id` (e.g. `id:"casting"`). Saved progress uses it, so never change an `id` after it has been published.
 - Write the correct option first. Options are shuffled when shown.
 - Text in `` `backticks` `` is shown as code.
 - Use `\n` in an option for output that spans several lines.
@@ -102,11 +117,14 @@ Questions live in the `SUBJECTS` array in `index.html`:
 ## TODO
 
 ### Data
-- [ ] **Stable question ids.** Saved answers are keyed by position (`"<subject>-<question>"`). Adding subjects at the end is safe. Inserting or reordering subjects attaches learners' saved answers to the wrong questions. Fix: give each subject and question a fixed id, or change the storage key (`pyquiz.v1` → `v2`) whenever the order changes, which resets everyone's progress.
+- [x] ~~Stable subject ids.~~ Saved answers are keyed by subject id and question position (`"casting-3"`), stored under `pyquiz.v2`. Old `pyquiz.v1` saves are migrated once.
+- [ ] **Question order inside a subject is still positional.** Adding questions at the end of a subject is safe. Inserting or reordering questions inside a subject attaches saved answers to the wrong questions. Fix: give each question its own id.
 
 ### Learning features
 - [ ] **Retry missed questions.** A wrong answer is final and the question never comes back. Add a mode that asks the missed questions again.
 - [ ] **More question types.** Almost all questions are "predict the output". Add more "find the bug" and "which code produces this output?" questions, especially for `if` and loops.
+- [ ] **Variables table after each answer.** Show one row per line of code and one column per variable, so learners see how values change step by step. This would help most in subjects 0, 6 and the loop subjects.
+- [ ] **Use the "gets" wording everywhere.** Subject 0 reads `=` as "gets". The older explanations have not been checked for wording like "x equals 5".
 - [ ] **Next subjects:** lists, then functions.
 
 ### Small fixes

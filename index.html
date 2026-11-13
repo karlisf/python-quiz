@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Python basics — practice quiz</title>
+<style>
+:root{
+  --paper:#F3F6F8; --grid:#DFE6ED; --ink:#1C2B4A; --muted:#5D6B82;
+  --card:#FFFFFF; --line:#C9D3DE; --code-bg:#1F2A40; --code-ink:#E8EEF7;
+  --yellow:#F2C230; --blue:#3672A4;
+  --ok:#2E7D4F; --ok-bg:#E5F3EA; --bad:#B3412E; --bad-bg:#F8E7E3;
+  --out-bg:#FFF8DC;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#141B27; --grid:#1C2533; --ink:#E4EAF3; --muted:#9AA8BD;
+    --card:#1B2433; --line:#2E3A4E; --code-bg:#0E141F; --code-ink:#E8EEF7;
+    --ok:#6CC891; --ok-bg:#183126; --bad:#F08A76; --bad-bg:#3A1F1B;
+    --out-bg:#2B2716;
+  }
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font-family:"Segoe UI",system-ui,-apple-system,Roboto,"Helvetica Neue",Arial,sans-serif;
+  color:var(--ink); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px; line-height:1.5; font-size:16px;
+}
+code,pre,.mono{font-family:"Cascadia Code","JetBrains Mono",Consolas,"SFMono-Regular",Menlo,monospace}
+.wrap{display:grid;grid-template-columns:260px 1fr;gap:28px;max-width:1120px;margin:0 auto;padding:28px 20px 60px}
+header.top{grid-column:1/-1;display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+h1{font-size:1.9rem;margin:0;letter-spacing:-.01em;font-weight:700}
+h1 .py{background:var(--yellow);color:#1C2B4A;padding:0 .3em;border-radius:4px}
+.sub{color:var(--muted);margin:.2rem 0 0;font-size:.95rem}
+.stats{display:flex;gap:18px;align-items:center;font-size:.95rem}
+.stats b{font-size:1.15rem}
+.btn{font:inherit;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:.5rem .9rem;border-radius:8px;cursor:pointer}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:#fff}
+.btn:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:3px solid var(--yellow);outline-offset:2px}
+
+nav.subjects{display:flex;flex-direction:column;gap:6px;align-self:start;position:sticky;top:20px}
+nav.subjects button{
+  text-align:left;font:inherit;background:var(--card);color:var(--ink);border:1px solid var(--line);
+  border-left:5px solid var(--line);border-radius:6px;padding:.55rem .75rem;cursor:pointer;
+}
+nav.subjects button.active{border-left-color:var(--yellow);box-shadow:0 0 0 1px var(--blue) inset}
+nav.subjects .nm{display:block;font-weight:600;font-size:.95rem}
+nav.subjects .meta{display:block;font-size:.8rem;color:var(--muted)}
+.dots{display:flex;gap:3px;margin-top:5px}
+.dots i{width:12px;height:6px;border-radius:2px;background:var(--line)}
+.dots i.ok{background:var(--ok)} .dots i.bad{background:var(--bad)}
+
+main{min-width:0}
+.qcard{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+.qhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
+.qnum{font-size:.9rem;color:var(--muted)}
+.level{font-size:.8rem;font-weight:600;padding:.15rem .55rem;border-radius:999px;border:1px solid var(--line)}
+.level.trivial{background:#E8F1FA;color:#24557F;border-color:#BCD3EA}
+.level.simple{background:#E9F5EC;color:#2B6A43;border-color:#BFDCC8}
+.level.non-advanced{background:#FFF3CF;color:#7A5A00;border-color:#EBD58C}
+.level.mixed{background:#F6E6F3;color:#7C2F6E;border-color:#E2BEDB}
+.qtext{font-size:1.12rem;font-weight:600;margin:.2rem 0 .8rem}
+pre.code{background:var(--code-bg);color:var(--code-ink);padding:14px 16px;border-radius:8px;overflow-x:auto;margin:0 0 .6rem;font-size:.95rem;line-height:1.55}
+.given{font-size:.9rem;color:var(--muted);margin:0 0 .8rem}
+.given code{background:var(--out-bg);color:var(--ink);padding:.05rem .35rem;border-radius:4px}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:6px}
+.opt{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:var(--card)}
+.opt button{display:flex;gap:12px;align-items:center;width:100%;text-align:left;font:inherit;color:var(--ink);background:transparent;border:0;padding:.65rem .85rem;cursor:pointer}
+.opt button:hover:not(:disabled){background:var(--paper)}
+.opt button:disabled{cursor:default}
+.key{flex:none;width:1.6rem;height:1.6rem;border-radius:5px;border:1px solid var(--line);display:grid;place-items:center;font-size:.85rem;color:var(--muted)}
+.otext{font-family:"Cascadia Code","JetBrains Mono",Consolas,Menlo,monospace;white-space:pre-wrap}
+.opt.correct{border-color:var(--ok);background:var(--ok-bg)}
+.opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+.opt.correct .key{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.wrong .key{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt.dim{opacity:.85}
+.expl{display:none;padding:0 .85rem .7rem 3.05rem;font-size:.93rem}
+.answered .expl{display:block}
+.expl .tag{font-weight:700;margin-right:.3rem}
+.opt.correct .tag{color:var(--ok)} .opt:not(.correct) .tag{color:var(--bad)}
+.expl code,.note code{background:rgba(127,140,160,.18);padding:.05rem .3rem;border-radius:4px;font-size:.9em}
+.outbox{display:none;margin-top:14px;background:var(--out-bg);border:1px dashed #D9B94A;border-radius:8px;padding:10px 14px}
+.answered ~ .outbox,.outbox.show{display:block}
+.outbox h3{margin:0 0 4px;font-size:.85rem;color:var(--muted);font-weight:600}
+.outbox pre{margin:0;white-space:pre-wrap;font-size:.95rem}
+.note{margin-top:10px;font-size:.93rem;color:var(--ink)}
+.navrow{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;flex-wrap:wrap}
+.hint{font-size:.82rem;color:var(--muted)}
+.summary{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 24px}
+.summary h2{margin-top:0}
+.summary table{border-collapse:collapse;width:100%;font-size:.95rem}
+.summary td,.summary th{padding:.45rem .5rem;border-bottom:1px solid var(--line);text-align:left}
+.summary td.n{text-align:right;font-variant-numeric:tabular-nums}
+.tablewrap{overflow-x:auto}
+
+@media (max-width:820px){
+  .wrap{grid-template-columns:1fr;gap:16px;padding:18px 12px 40px}
+  nav.subjects{position:static;flex-direction:row;overflow-x:auto;padding-bottom:4px}
+  nav.subjects button{min-width:170px}
+  .qcard,.summary{padding:16px}
+  .expl{padding-left:.85rem}
+}
+@media (prefers-reduced-motion:no-preference){
+  .expl,.outbox{animation:reveal .18s ease-out}
+  @keyframes reveal{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>Python basics <span class="py">practice quiz</span></h1>
+      <p class="sub">7 subjects, 10 questions each, from trivial to mixed. Pick an answer to see why each choice is right or wrong.</p>
+    </div>
+    <div class="stats">
+      <span>Score <b id="score">0</b> / <span id="answeredCount">0</span></span>
+      <span>Time <b id="timer" class="mono">0:00</b></span>
+      <button class="btn" id="summaryBtn">Results</button>
+      <button class="btn" id="resetBtn">Start over</button>
+    </div>
+  </header>
+  <nav class="subjects" id="subjects" aria-label="Subjects"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+/* Each question: lvl, q (question text), code, given (optional: what the user types),
+   opts: [text, isCorrect, explanation], out: actual output / value, note: optional extra tip */
+const SUBJECTS = [
+{ name:"Values and types", blurb:"int, str, float, single characters", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`x = 5
+print(type(x))`, opts:[
+  ["<class 'int'>", true, "`5` is a whole number written without quotes, so Python stores it as an `int`."],
+  ["<class 'str'>", false, "It would be `str` only with quotes: `x = \"5\"`."],
+  ["<class 'float'>", false, "A float needs a decimal point, e.g. `5.0`."],
+  ["5", false, "`type(x)` prints the type of the value, not the value itself. `print(x)` would print `5`."]],
+  out:"<class 'int'>"},
+ {lvl:"trivial", q:"What is the type of name?", code:`name = "Anna"`, opts:[
+  ["str", true, "Text in quotes is a string (`str`)."],
+  ["char", false, "Python has no `char` type at all. Text of any length is `str`."],
+  ["int", false, "Only numbers without quotes become `int`."],
+  ["list", false, "A list uses square brackets, e.g. `[\"A\", \"n\"]`."]],
+  out:"type(name)  →  <class 'str'>"},
+ {lvl:"trivial", q:"A single character in quotes. What does this print?", code:`c = 'A'
+print(type(c))`, opts:[
+  ["<class 'str'>", true, "A single character is just a string of length 1. Single and double quotes mean the same thing."],
+  ["<class 'char'>", false, "Unlike C or Java, Python has no separate character type."],
+  ["<class 'int'>", false, "The letter is not converted to a number. (`ord('A')` would give `65`, but that is a separate function.)"],
+  ["Error", false, "Single quotes are perfectly valid for strings."]],
+  out:"<class 'str'>"},
+ {lvl:"simple", q:"The digit is in quotes. What is the type of x?", code:`x = "5"`, opts:[
+  ["str", true, "Quotes make it text. It looks like a number, but Python sees the character `5`."],
+  ["int", false, "It would be `int` only without quotes: `x = 5`."],
+  ["It depends on how it is used", false, "A value's type is fixed when it is created. `\"5\"` is always a `str` until you convert it."],
+  ["Error", false, "Any characters, including digits, can be stored in a string."]],
+  out:"type(x)  →  <class 'str'>"},
+ {lvl:"simple", q:"What does this print?", code:`print(len("Hello"))`, opts:[
+  ["5", true, "`len()` counts characters: H-e-l-l-o = 5."],
+  ["4", false, "That would be the index of the last character (indexes start at 0), but the length is 5."],
+  ["6", false, "The quotes are not part of the string, so they are not counted."],
+  ["Hello", false, "`len()` returns a number, not the text."]],
+  out:"5"},
+ {lvl:"simple", q:"Indexing a string. What does this print?", code:`s = "Python"
+print(s[0])`, opts:[
+  ["P", true, "Indexes start at 0, so `s[0]` is the first character."],
+  ["y", false, "`y` is `s[1]`. Counting starts at 0, not 1."],
+  ["n", false, "`n` is the last character: `s[5]` or `s[-1]`."],
+  ["Error", false, "Index 0 always exists in a non-empty string."]],
+  out:"P"},
+ {lvl:"non-advanced", q:"Negative index. What does this print?", code:`s = "Python"
+print(s[-1])`, opts:[
+  ["n", true, "Negative indexes count from the end: `-1` is the last character, `-2` the one before it."],
+  ["P", false, "`P` is `s[0]` (or `s[-6]`)."],
+  ["o", false, "`o` is `s[-2]`."],
+  ["IndexError", false, "Negative indexes are allowed, as long as they are not further back than `-len(s)`."]],
+  out:"n"},
+ {lvl:"non-advanced", q:"What is the type of x?", code:`x = 7.0`, opts:[
+  ["float", true, "The decimal point makes it a `float`, even though the fractional part is zero."],
+  ["int", false, "`7` would be an `int`, `7.0` is not."],
+  ["str", false, "There are no quotes."],
+  ["Error", false, "`7.0` is a valid number literal."]],
+  out:"type(x)  →  <class 'float'>"},
+ {lvl:"non-advanced", q:"Index past the end. What happens?", code:`s = "Hi"
+print(s[2])`, opts:[
+  ["IndexError", true, "`\"Hi\"` has indexes 0 and 1 only. Index 2 is outside the string, so Python raises an error."],
+  ["i", false, "`i` is `s[1]`, the last valid index."],
+  ["(empty line)", false, "Python does not quietly return an empty string for a bad index; it stops with an error."],
+  ["H", false, "Python does not wrap around to the start."]],
+  out:"IndexError: string index out of range"},
+ {lvl:"mixed", q:"Comparing values of different types. What does this print?", code:`a = 10
+b = "10"
+c = 10.0
+print(a == c, a == b)`, opts:[
+  ["True False", true, "An `int` and a `float` with the same numeric value are equal. A number is never equal to a string, even if the string contains the same digits."],
+  ["True True", false, "`10 == \"10\"` is `False`: Python does not convert the string automatically."],
+  ["False False", false, "`10 == 10.0` is `True`: both are numbers with the same value."],
+  ["False True", false, "Both parts are reversed. Numbers compare by value; numbers and strings are never equal."]],
+  out:"True False"}
+]},
+{ name:"Operations", blurb:"+ - * / // % and type mismatches", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`print(7 + 3)`, opts:[
+  ["10", true, "Two `int`s added give an `int`."],
+  ["73", false, "Joining digits happens only with strings: `\"7\" + \"3\"`."],
+  ["10.0", false, "Adding two `int`s does not produce a float."],
+  ["7 + 3", false, "Without quotes, Python calculates the expression."]],
+  out:"10"},
+ {lvl:"trivial", q:"+ with strings. What does this print?", code:`print("ab" + "cd")`, opts:[
+  ["abcd", true, "`+` on strings joins them (concatenation), with nothing in between."],
+  ["ab cd", false, "`+` adds no space. You would need `\"ab\" + \" \" + \"cd\"`."],
+  ["Error", false, "Adding two strings is allowed. Mixing a string and a number is not."],
+  ["ab+cd", false, "The `+` is an operator, not part of the text."]],
+  out:"abcd"},
+ {lvl:"trivial", q:"* with a string. What does this print?", code:`print(3 * "ha")`, opts:[
+  ["hahaha", true, "`int * str` repeats the string that many times."],
+  ["ha ha ha", false, "Repetition adds no spaces."],
+  ["Error", false, "Multiplying a string by an `int` is allowed (only `str * str` or `str * float` fail)."],
+  ["3ha", false, "That would be joining, which needs `str(3) + \"ha\"`."]],
+  out:"hahaha"},
+ {lvl:"simple", q:"Normal division. What does this print?", code:`print(7 / 2)`, opts:[
+  ["3.5", true, "`/` always does true division and always returns a `float`."],
+  ["3", false, "That is what `7 // 2` (floor division) gives."],
+  ["4", false, "Python does not round with `/`."],
+  ["3.0", false, "The remainder is not dropped; you get the exact result 3.5."]],
+  out:"3.5"},
+ {lvl:"simple", q:"Floor division. What does this print?", code:`print(7 // 2)`, opts:[
+  ["3", true, "`//` divides and rounds down to a whole number. 7 / 2 = 3.5, rounded down = 3."],
+  ["3.5", false, "That is `/`. `//` removes the fractional part."],
+  ["4", false, "`//` rounds down, never up."],
+  ["3.0", false, "With two `int`s, `//` returns an `int`. (`7.0 // 2` would give `3.0`.)"]],
+  out:"3"},
+ {lvl:"simple", q:"Remainder. What does this print?", code:`print(7 % 2)`, opts:[
+  ["1", true, "`%` gives the remainder: 7 = 2·3 + 1. This is the classic odd/even check."],
+  ["3", false, "3 is the quotient (`7 // 2`), not the remainder."],
+  ["0", false, "Remainder 0 would mean 7 is divisible by 2."],
+  ["3.5", false, "That is `7 / 2`."]],
+  out:"1"},
+ {lvl:"non-advanced", q:"Order of operations. What does this print?", code:`print(2 + 3 * 4)`, opts:[
+  ["14", true, "Multiplication goes first: 3·4 = 12, then 2 + 12 = 14."],
+  ["20", false, "That would be `(2 + 3) * 4`. Without parentheses, `*` wins."],
+  ["24", false, "No combination of these operations gives 24."],
+  ["9", false, "That would be 2 + 3 + 4."]],
+  out:"14"},
+ {lvl:"non-advanced", q:"Floor division with a negative number. What does this print?", code:`print(-7 // 2)`, opts:[
+  ["-4", true, "`//` rounds down (towards minus infinity). -3.5 rounded down is -4, not -3."],
+  ["-3", false, "That is rounding towards zero, which is what `int(-3.5)` does. `//` always goes down."],
+  ["-3.5", false, "That is `-7 / 2`."],
+  ["3", false, "The sign does not disappear."]],
+  out:"-4"},
+ {lvl:"non-advanced", q:"A digit string times a number. What does this print?", code:`print("5" * 3)`, opts:[
+  ["555", true, "`\"5\"` is a string, so `* 3` repeats it, just like `\"ha\" * 3`."],
+  ["15", false, "That needs a number: `5 * 3` or `int(\"5\") * 3`."],
+  ["Error", false, "`str * int` is allowed: it means repetition."],
+  ["5 5 5", false, "Repetition adds no spaces."]],
+  out:"555"},
+ {lvl:"mixed", q:"A string plus a number. What happens?", code:`print("5" + 5)`, opts:[
+  ["TypeError", true, "`+` cannot mix `str` and `int`. Python will not guess whether you want 10 or \"55\"; you must convert one side."],
+  ["10", false, "You would need `int(\"5\") + 5`."],
+  ["55", false, "You would need `\"5\" + str(5)`."],
+  ["5 5", false, "Python never inserts spaces with `+`."]],
+  out:"TypeError: can only concatenate str (not \"int\") to str",
+  note:"Fix it by converting: `int(\"5\") + 5` gives `10`, `\"5\" + str(5)` gives `55`."}
+]},
+{ name:"Casting", blurb:"int(), str(), float() conversions", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`x = int("42")
+print(x + 1)`, opts:[
+  ["43", true, "`int(\"42\")` turns the text into the number 42, so normal arithmetic works."],
+  ["421", false, "That would happen with strings: `\"42\" + \"1\"`. Here `x` is already an `int`."],
+  ["TypeError", false, "After `int()`, `x` is a number, so `x + 1` is fine."],
+  ["42", false, "The `+ 1` is applied."]],
+  out:"43"},
+ {lvl:"trivial", q:"What does this print?", code:`s = str(10)
+print(s + "5")`, opts:[
+  ["105", true, "`str(10)` gives the text `\"10\"`, and `+` joins it with `\"5\"`."],
+  ["15", false, "`s` is now text, so `+` joins instead of adding."],
+  ["TypeError", false, "Both sides are strings, so `+` works."],
+  ["10 5", false, "Joining adds no space."]],
+  out:"105"},
+ {lvl:"trivial", q:"What does this print?", code:`print(float(3))`, opts:[
+  ["3.0", true, "`float()` turns the integer into a floating-point number, shown with a decimal point."],
+  ["3", false, "That is how an `int` is shown. A `float` always prints with `.0` here."],
+  ["3.00", false, "Python shows the shortest form, `3.0`."],
+  ["Error", false, "Any `int` can be converted to `float`."]],
+  out:"3.0"},
+ {lvl:"simple", q:"Converting a float to int. What does this print?", code:`print(int(3.9))`, opts:[
+  ["3", true, "`int()` cuts off the decimal part. It does not round."],
+  ["4", false, "Rounding would need `round(3.9)`, which gives `4`."],
+  ["3.9", false, "The result of `int()` is always a whole number."],
+  ["Error", false, "Converting a float to int is allowed."]],
+  out:"3"},
+ {lvl:"simple", q:"A decimal string to int. What happens?", code:`print(int("3.5"))`, opts:[
+  ["ValueError", true, "`int()` only accepts strings that look like whole numbers. `\"3.5\"` has a dot, so it fails."],
+  ["3", false, "`int(3.5)` (a float) gives 3, but `int(\"3.5\")` (a string) is an error."],
+  ["4", false, "There is no rounding, and here not even a conversion."],
+  ["3.5", false, "`int()` never returns a decimal."]],
+  out:"ValueError: invalid literal for int() with base 10: '3.5'",
+  note:"Go through float first: `int(float(\"3.5\"))` gives `3`."},
+ {lvl:"simple", q:"What does this print?", code:`print(float("2.5") * 2)`, opts:[
+  ["5.0", true, "`float(\"2.5\")` is the number 2.5. 2.5·2 = 5.0, still a float."],
+  ["5", false, "A float times an int gives a float, so it prints `5.0`."],
+  ["2.52.5", false, "That would be the string `\"2.5\" * 2`. After `float()`, it is a number."],
+  ["Error", false, "`\"2.5\"` is a valid float string."]],
+  out:"5.0"},
+ {lvl:"non-advanced", q:"Negative float to int. What does this print?", code:`print(int(-3.7))`, opts:[
+  ["-3", true, "`int()` cuts towards zero: it drops `.7` and keeps -3."],
+  ["-4", false, "That is rounding down (like `//` does). `int()` cuts towards zero instead."],
+  ["-3.7", false, "`int()` always returns a whole number."],
+  ["3", false, "The sign is kept."]],
+  out:"-3"},
+ {lvl:"non-advanced", q:"What does this print?", code:`print(str(4) * 2)`, opts:[
+  ["44", true, "`str(4)` is the text `\"4\"`; text times 2 repeats it."],
+  ["8", false, "That is `4 * 2` without the conversion."],
+  ["Error", false, "`str * int` is valid repetition."],
+  ["4 4", false, "Repetition adds no spaces."]],
+  out:"44"},
+ {lvl:"non-advanced", q:"Same values, two ways. What does this print?", code:`a = "7"
+b = "8"
+print(a + b, int(a) + int(b))`, opts:[
+  ["78 15", true, "First part joins two strings: `\"78\"`. Second part converts to numbers first: 7 + 8 = 15. `print` puts a space between them."],
+  ["15 15", false, "`a + b` without conversion joins the text."],
+  ["78 78", false, "After `int()`, `+` adds numbers."],
+  ["TypeError", false, "Each `+` has matching types on both sides, so nothing fails."]],
+  out:"78 15"},
+ {lvl:"mixed", q:"Two conversions in a row. What does this print?", code:`print(int(float("3.9")))`, opts:[
+  ["3", true, "Inside out: `float(\"3.9\")` gives 3.9, then `int(3.9)` cuts it to 3."],
+  ["4", false, "`int()` cuts, it does not round."],
+  ["ValueError", false, "The error happens only with `int(\"3.9\")` directly. Here the string goes to `float()` first, which accepts it."],
+  ["3.9", false, "The outer `int()` removes the decimal part."]],
+  out:"3"}
+]},
+{ name:"Logical operations", blurb:"and, or, not, parentheses", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`print(True and False)`, opts:[
+  ["False", true, "`and` is `True` only if both sides are `True`."],
+  ["True", false, "That would need `or`, or both sides `True`."],
+  ["None", false, "Logical operators on booleans give a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"False"},
+ {lvl:"trivial", q:"What does this print?", code:`print(True or False)`, opts:[
+  ["True", true, "`or` is `True` if at least one side is `True`."],
+  ["False", false, "`or` is `False` only if both sides are `False`."],
+  ["None", false, "The result is a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"True"},
+ {lvl:"trivial", q:"What does this print?", code:`print(not True)`, opts:[
+  ["False", true, "`not` flips the value."],
+  ["True", false, "`not` flips: `not True` is `False`."],
+  ["-1", false, "`not` is a logical operator, not a minus sign."],
+  ["Error", false, "This is valid code."]],
+  out:"False"},
+ {lvl:"simple", q:"Is x in the range? What does this print?", code:`x = 5
+print(x > 3 and x < 10)`, opts:[
+  ["True", true, "5 > 3 is True, 5 < 10 is True. True and True = True."],
+  ["False", false, "Both conditions hold for 5."],
+  ["5", false, "Comparisons produce booleans."],
+  ["Error", false, "This is valid code. (`3 < x < 10` would also work.)"]],
+  out:"True"},
+ {lvl:"simple", q:"Is x outside the range? What does this print?", code:`x = 5
+print(x < 3 or x > 10)`, opts:[
+  ["False", true, "5 < 3 is False, 5 > 10 is False. False or False = False."],
+  ["True", false, "`or` needs at least one True side, and neither is."],
+  ["5", false, "Comparisons produce booleans."],
+  ["Error", false, "This is valid code."]],
+  out:"False"},
+ {lvl:"simple", q:"What does this print?", code:`print(not (5 > 3))`, opts:[
+  ["False", true, "Parentheses first: 5 > 3 is True, then `not True` is False."],
+  ["True", false, "That is the value inside the parentheses; `not` flips it."],
+  ["5", false, "The result is a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"False"},
+ {lvl:"non-advanced", q:"No parentheses. What does this print?", code:`print(True or False and False)`, opts:[
+  ["True", true, "`and` is evaluated before `or`, like `*` before `+`. So it is `True or (False and False)` = `True or False` = True."],
+  ["False", false, "That is what you get reading left to right: `(True or False) and False`. But `and` binds tighter."],
+  ["None", false, "The result is a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"True"},
+ {lvl:"non-advanced", q:"Same values, now with parentheses. What does this print?", code:`print((True or False) and False)`, opts:[
+  ["False", true, "Parentheses first: `True or False` = True. Then `True and False` = False. Compare with the previous question."],
+  ["True", false, "The parentheses change the order, so `and False` is applied last."],
+  ["None", false, "The result is a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"False"},
+ {lvl:"non-advanced", q:"not without parentheses. What does this print?", code:`print(not True or True)`, opts:[
+  ["True", true, "`not` binds tightest: `(not True) or True` = `False or True` = True."],
+  ["False", false, "That would be `not (True or True)`. Without parentheses `not` applies only to the first `True`."],
+  ["None", false, "The result is a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"True",
+  note:"Priority from highest to lowest: comparisons (`<`, `==` …), then `not`, then `and`, then `or`."},
+ {lvl:"mixed", q:"Combining arithmetic and logic. What does this print?", code:`x = 7
+print(x > 5 and not (x % 2 == 0))`, opts:[
+  ["True", true, "7 > 5 is True. 7 % 2 is 1, so `x % 2 == 0` is False, and `not False` is True. True and True = True. In words: x is greater than 5 and odd."],
+  ["False", false, "Check the right side again: 7 is odd, so `x % 2 == 0` is False and `not` makes it True."],
+  ["1", false, "`x % 2` is 1, but it is compared with 0, which gives a boolean."],
+  ["Error", false, "This is valid code."]],
+  out:"True"}
+]},
+{ name:"input() and print()", blurb:"reading text, sep, end", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`print("Hello", "World")`, opts:[
+  ["Hello World", true, "With several arguments, `print` puts one space between them by default."],
+  ["HelloWorld", false, "That is `print(\"Hello\" + \"World\")`. The comma version adds a space."],
+  ["Hello, World", false, "The comma separates arguments in code; it is not printed."],
+  ["Error", false, "`print` accepts any number of arguments."]],
+  out:"Hello World"},
+ {lvl:"trivial", q:"The user types 20. What is the type of x?", code:`x = input("Age: ")`, given:"User types: 20", opts:[
+  ["str", true, "`input()` always returns a string, whatever the user types."],
+  ["int", false, "To get an `int` you must convert: `int(input(\"Age: \"))`."],
+  ["float", false, "No automatic conversion happens."],
+  ["It depends on what the user types", false, "It never depends: `input()` always gives `str`."]],
+  out:"Age: 20\n\nx  →  '20'   (type str)"},
+ {lvl:"trivial", q:"Changing the separator. What does this print?", code:`print("a", "b", sep="-")`, opts:[
+  ["a-b", true, "`sep` replaces the default space between arguments."],
+  ["a b", false, "That is the default; here it is replaced by `-`."],
+  ["a - b", false, "Only the `sep` text is inserted, with no extra spaces."],
+  ["a b -", false, "`sep` goes between arguments, not at the end."]],
+  out:"a-b"},
+ {lvl:"simple", q:"Changing the ending. What does this print?", code:`print("Hi", end="!")
+print("Bye")`, opts:[
+  ["Hi!Bye", true, "`end` replaces the default newline. So the first `print` ends with `!` and stays on the same line."],
+  ["Hi!\nBye", false, "The newline was replaced by `!`, so `Bye` continues on the same line."],
+  ["Hi Bye!", false, "`end` belongs to the first `print` only."],
+  ["Hi\n!Bye", false, "`!` is printed instead of the newline, not after it."]],
+  out:"Hi!Bye"},
+ {lvl:"simple", q:"The user types 20. What happens?", code:`age = input()
+print(age + 1)`, given:"User types: 20", opts:[
+  ["TypeError", true, "`age` is the string `\"20\"`, and you cannot add a string and an int."],
+  ["21", false, "That needs `int(age) + 1`."],
+  ["201", false, "That needs `age + \"1\"` (string + string)."],
+  ["20", false, "The line fails before anything is printed."]],
+  out:"TypeError: can only concatenate str (not \"int\") to str"},
+ {lvl:"simple", q:"The user types 20. What does this print?", code:`age = int(input())
+print(age + 1)`, given:"User types: 20", opts:[
+  ["21", true, "The text `\"20\"` is converted to the number 20 right away, so +1 gives 21."],
+  ["201", false, "`age` is already a number, so `+` adds."],
+  ["TypeError", false, "The conversion fixed the type problem from the previous question."],
+  ["20", false, "The +1 is applied."]],
+  out:"21"},
+ {lvl:"non-advanced", q:"The user types 3. What does this print?", code:`n = input()
+print(n * 2)`, given:"User types: 3", opts:[
+  ["33", true, "`n` is the string `\"3\"`; string times 2 repeats it. A common surprise for beginners."],
+  ["6", false, "That needs `int(n) * 2`."],
+  ["TypeError", false, "`str * int` is allowed (repetition). Only `str + int` fails."],
+  ["3 3", false, "Repetition adds no spaces."]],
+  out:"33"},
+ {lvl:"non-advanced", q:"Empty separator. What does this print?", code:`print(1, 2, 3, sep="")`, opts:[
+  ["123", true, "`sep=\"\"` means nothing goes between the values."],
+  ["1 2 3", false, "That is the default separator; here it was set to empty."],
+  ["6", false, "`print` does not add numbers; it just shows them."],
+  ["1,2,3", false, "The commas belong to the code, not the output."]],
+  out:"123"},
+ {lvl:"non-advanced", q:"Text and a number with a comma. What does this print?", code:`print("x =", 5)`, opts:[
+  ["x = 5", true, "The comma adds one space, so `\"x =\"` and `5` are joined with a space. Numbers and text can be mixed this way without conversion."],
+  ["x =5", false, "The default separator adds a space between arguments."],
+  ["x =, 5", false, "The comma is code syntax, not output."],
+  ["TypeError", false, "Commas in `print` are fine with mixed types. Only `\"x =\" + 5` would fail."]],
+  out:"x = 5"},
+ {lvl:"mixed", q:"The user types 2, then 3. What does this print?", code:`a = input()
+b = input()
+print(int(a) + int(b), a + b)`, given:"User types: 2 (Enter), then 3 (Enter)", opts:[
+  ["5 23", true, "Converted: 2 + 3 = 5. Not converted: `\"2\" + \"3\"` = `\"23\"`. `print` puts a space between them."],
+  ["5 5", false, "The second part uses the original strings, so `+` joins them."],
+  ["23 23", false, "The first part converts to `int`, so `+` adds."],
+  ["TypeError", false, "Each `+` has the same type on both sides."]],
+  out:"2\n3\n5 23"}
+]},
+{ name:"Tracing variables", blurb:"what does x hold after several steps?", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`x = 5
+x = 8
+print(x)`, opts:[
+  ["8", true, "The second assignment replaces the first value. A variable holds only its latest value."],
+  ["5", false, "`5` was overwritten."],
+  ["13", false, "Assignment replaces, it does not add."],
+  ["5 8", false, "A variable holds one value at a time."]],
+  out:"8"},
+ {lvl:"trivial", q:"What does this print?", code:`x = 3
+x = x + 2
+print(x)`, opts:[
+  ["5", true, "The right side is computed first with the old value: 3 + 2 = 5, then stored back in `x`."],
+  ["3", false, "The new value is stored in `x`."],
+  ["2", false, "`x` gets the whole result, not just the `2`."],
+  ["Error", false, "Using a variable on both sides is normal; `x = x + 2` means 'new x = old x + 2'."]],
+  out:"5"},
+ {lvl:"trivial", q:"Shortcut operator. What does this print?", code:`x = 10
+x -= 4
+print(x)`, opts:[
+  ["6", true, "`x -= 4` is short for `x = x - 4`."],
+  ["-4", false, "`-=` subtracts from the current value; it does not assign `-4`."],
+  ["10", false, "`-=` changes `x`."],
+  ["14", false, "That would be `+=`."]],
+  out:"6"},
+ {lvl:"simple", q:"What does this print?", code:`x = 2
+x *= 3
+x += 1
+print(x)`, opts:[
+  ["7", true, "Step by step: x = 2 → 2·3 = 6 → 6 + 1 = 7."],
+  ["8", false, "That would be 2·(3+1). The steps run in order, one line at a time."],
+  ["6", false, "You stopped one line early."],
+  ["9", false, "Check: 2·3 = 6, then +1."]],
+  out:"7"},
+ {lvl:"simple", q:"Copying, then changing. What does this print?", code:`a = 5
+b = a
+a = 10
+print(b)`, opts:[
+  ["5", true, "`b = a` copies the current value (5) into `b`. Changing `a` later does not affect `b`."],
+  ["10", false, "`b` is not linked to `a`; it got the value 5 at that moment."],
+  ["15", false, "Nothing is added."],
+  ["Error", false, "This is valid code."]],
+  out:"5"},
+ {lvl:"simple", q:"Building a string. What does this print?", code:`x = "ab"
+x = x + "c"
+x = x * 2
+print(x)`, opts:[
+  ["abcabc", true, "`\"ab\" + \"c\"` = `\"abc\"`, then `\"abc\" * 2` = `\"abcabc\"`."],
+  ["abcc", false, "`* 2` repeats the whole string, not the last character."],
+  ["abc", false, "You stopped one line early."],
+  ["ababcc", false, "The steps happen one after another: join first, then repeat."]],
+  out:"abcabc"},
+ {lvl:"non-advanced", q:"Swapping. What does this print?", code:`a = 1
+b = 2
+a, b = b, a
+print(a, b)`, opts:[
+  ["2 1", true, "Python evaluates the right side first (2, 1), then assigns both at once. This swaps the values."],
+  ["1 2", false, "The values do get swapped."],
+  ["2 2", false, "That is what happens with two separate lines `a = b` then `b = a`. The one-line form avoids it."],
+  ["1 1", false, "Both values are read before either is changed."]],
+  out:"2 1"},
+ {lvl:"non-advanced", q:"What does this print?", code:`x = 10
+x = x // 3
+x = x ** 2
+print(x)`, opts:[
+  ["9", true, "10 // 3 = 3 (floor division), then 3 ** 2 = 9 (`**` is power)."],
+  ["11.11...", false, "`//` gives a whole number (3), not 3.33."],
+  ["6", false, "`**` is power, not multiplication: 3 ** 2 = 3·3."],
+  ["100", false, "The `//` step happens first."]],
+  out:"9"},
+ {lvl:"non-advanced", q:"Two variables changing. What does this print?", code:`a = 3
+b = a + 1
+a = b * 2
+b = a - b
+print(a, b)`, opts:[
+  ["8 4", true, "a=3; b=3+1=4; a=4·2=8; b=8−4=4. Always use the newest values."],
+  ["8 2", false, "On the last line `b` is still 4, not 6: 8 − 4 = 4."],
+  ["6 3", false, "On line 3, `b` is 4, so `a` becomes 8."],
+  ["3 4", false, "Lines 3 and 4 also change the values."]],
+  out:"8 4",
+  note:"Tip: write a small table with one column per variable and update it line by line."},
+ {lvl:"mixed", q:"Changing types along the way. What does this print?", code:`x = "5"
+x = int(x) + 1
+x = str(x) * 2
+print(x)`, opts:[
+  ["66", true, "`int(\"5\") + 1` = 6 (a number), then `str(6) * 2` = `\"66\"` (text repeated)."],
+  ["12", false, "After `str()`, `* 2` repeats the text instead of multiplying."],
+  ["5151", false, "After line 2, `x` is the number 6, not `\"51\"`."],
+  ["TypeError", false, "Every step converts first, so the types always match."]],
+  out:"66"}
+]},
+{ name:"if, elif, else", blurb:"choosing which code runs", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`x = 10
+if x > 5:
+    print("big")
+else:
+    print("small")`, opts:[
+  ["big", true, "10 > 5 is True, so the `if` block runs and `else` is skipped."],
+  ["small", false, "`else` runs only when the condition is False."],
+  ["big\nsmall", false, "Exactly one of `if` / `else` runs, never both."],
+  ["(nothing)", false, "One of the two branches always runs."]],
+  out:"big"},
+ {lvl:"trivial", q:"Same code, different value. What does this print?", code:`x = 3
+if x > 5:
+    print("big")
+else:
+    print("small")`, opts:[
+  ["small", true, "3 > 5 is False, so the `else` block runs."],
+  ["big", false, "The condition is False for 3."],
+  ["big\nsmall", false, "Only one branch runs."],
+  ["(nothing)", false, "With an `else`, something always runs."]],
+  out:"small"},
+ {lvl:"trivial", q:"No else this time. What does this print?", code:`x = 4
+if x == 5:
+    print("five")`, opts:[
+  ["(nothing)", true, "4 == 5 is False, and there is no `else`, so nothing is printed."],
+  ["five", false, "The condition is False."],
+  ["False", false, "The condition is checked, but its value is not printed."],
+  ["Error", false, "An `if` without `else` is perfectly valid."]],
+  out:"(no output)"},
+ {lvl:"simple", q:"Grading with elif. What does this print?", code:`score = 75
+if score >= 90:
+    print("A")
+elif score >= 70:
+    print("B")
+else:
+    print("C")`, opts:[
+  ["B", true, "75 >= 90 is False, then 75 >= 70 is True, so `B` prints and the rest is skipped."],
+  ["A", false, "75 is less than 90."],
+  ["C", false, "`else` runs only if every condition above is False, but 75 >= 70 is True."],
+  ["B\nC", false, "Once a branch matches, the rest of the chain is skipped."]],
+  out:"B"},
+ {lvl:"simple", q:"Odd or even. What does this print?", code:`x = 7
+if x % 2 == 0:
+    print("even")
+else:
+    print("odd")`, opts:[
+  ["odd", true, "7 % 2 = 1, so `x % 2 == 0` is False and `else` runs."],
+  ["even", false, "Even numbers have remainder 0 when divided by 2; 7 has remainder 1."],
+  ["1", false, "The remainder is used in the comparison, not printed."],
+  ["(nothing)", false, "One of the branches always runs."]],
+  out:"odd"},
+ {lvl:"simple", q:"Two separate ifs. What does this print?", code:`x = 15
+if x > 10:
+    print("A")
+if x > 5:
+    print("B")`, opts:[
+  ["A\nB", true, "These are two independent `if` statements. Both conditions are True, so both print."],
+  ["A", false, "That would be the case with `elif`. Two separate `if`s are each checked."],
+  ["B", false, "15 > 10 is also True."],
+  ["(nothing)", false, "Both conditions are True."]],
+  out:"A\nB"},
+ {lvl:"non-advanced", q:"Same idea, now with elif. What does this print?", code:`x = 15
+if x > 10:
+    print("A")
+elif x > 5:
+    print("B")`, opts:[
+  ["A", true, "In an `if/elif` chain only the first matching branch runs. Compare with the previous question."],
+  ["A\nB", false, "That happens with two separate `if`s. `elif` is skipped once an earlier branch matched."],
+  ["B", false, "The `if` is checked first and it is already True."],
+  ["(nothing)", false, "15 > 10 is True."]],
+  out:"A"},
+ {lvl:"non-advanced", q:"The conditions are in a different order. What does this print?", code:`score = 95
+if score >= 70:
+    print("B")
+elif score >= 90:
+    print("A")
+else:
+    print("C")`, opts:[
+  ["B", true, "95 >= 70 is True first, so `B` prints and the chain stops. The `>= 90` check is never reached. Order matters: check the strictest condition first."],
+  ["A", false, "95 does deserve an A, but Python stops at the first True condition, which is `>= 70`."],
+  ["B\nA", false, "Only one branch of an `if/elif/else` chain runs."],
+  ["C", false, "`else` runs only if all conditions are False."]],
+  out:"B"},
+ {lvl:"non-advanced", q:"A string as a condition. What does this print?", code:`name = ""
+if name:
+    print("Hello", name)
+else:
+    print("empty")`, opts:[
+  ["empty", true, "An empty string counts as False in a condition. Any non-empty string counts as True. (The same goes for `0`: it is False, other numbers are True.)"],
+  ["Hello", false, "`\"\"` is treated as False, so the `if` block is skipped."],
+  ["Error", false, "Any value can be used as a condition in Python."],
+  ["(nothing)", false, "There is an `else`, so something always prints."]],
+  out:"empty"},
+ {lvl:"mixed", q:"Conditions that change x. What does this print?", code:`x = 4
+if x > 3:
+    x = x * 2
+if x > 6:
+    x = x - 1
+else:
+    x = 0
+print(x)`, opts:[
+  ["7", true, "4 > 3, so x = 8. The second `if` sees the new value: 8 > 6, so x = 7."],
+  ["0", false, "The second check uses the updated x (8), not the original 4."],
+  ["8", false, "The second `if` also runs, because 8 > 6."],
+  ["3", false, "That would be 4 − 1. But x was doubled to 8 first."]],
+  out:"7"}
+]}
+];
+
+const LETTERS = ["A","B","C","D"];
+const STORE_KEY = "pyquiz.v1";
+let state = { subj:0, idx:0, answers:{}, seconds:0, showSummary:false };
+try { const s = JSON.parse(localStorage.getItem(STORE_KEY)); if (s && s.answers) state = Object.assign(state, s); } catch(e){}
+function save(){ try { localStorage.setItem(STORE_KEY, JSON.stringify(state)); } catch(e){} }
+
+const orders = {};
+function order(id, n){
+  if (!orders[id]) { const a=[...Array(n).keys()]; for(let i=n-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} orders[id]=a; }
+  return orders[id];
+}
+const esc = s => s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+const rich = s => esc(s).replace(/`([^`]+)`/g,"<code>$1</code>");
+const qid = (s,i) => s+"-"+i;
+
+function totals(){
+  let ok=0,n=0;
+  SUBJECTS.forEach((S,s)=>S.qs.forEach((Q,i)=>{const a=state.answers[qid(s,i)]; if(a!==undefined){n++; if(Q.opts[a][1]) ok++;}}));
+  return {ok,n};
+}
+
+function renderNav(){
+  const nav=document.getElementById("subjects"); nav.innerHTML="";
+  SUBJECTS.forEach((S,s)=>{
+    let ok=0, n=0, dots="";
+    S.qs.forEach((Q,i)=>{const a=state.answers[qid(s,i)]; let c=""; if(a!==undefined){n++; if(Q.opts[a][1]){ok++;c="ok";}else c="bad";} dots+=`<i class="${c}"></i>`;});
+    const b=document.createElement("button");
+    if(s===state.subj && !state.showSummary) b.classList.add("active");
+    b.innerHTML=`<span class="nm">${s+1}. ${esc(S.name)}</span><span class="meta">${esc(S.blurb)} · ${ok}/${n}</span><span class="dots">${dots}</span>`;
+    b.onclick=()=>{state.subj=s; state.idx=firstUnanswered(s); state.showSummary=false; save(); render();};
+    nav.appendChild(b);
+  });
+  const t=totals();
+  document.getElementById("score").textContent=t.ok;
+  document.getElementById("answeredCount").textContent=t.n;
+}
+function firstUnanswered(s){ const i=SUBJECTS[s].qs.findIndex((_,i)=>state.answers[qid(s,i)]===undefined); return i<0?0:i; }
+
+function renderQuestion(){
+  const S=SUBJECTS[state.subj], Q=S.qs[state.idx], id=qid(state.subj,state.idx);
+  const ans=state.answers[id], answered=ans!==undefined;
+  const ord=order(id,Q.opts.length);
+  const main=document.getElementById("main");
+  let html=`<section class="qcard"><div class="qhead"><span class="qnum">${esc(S.name)} — question ${state.idx+1} of ${S.qs.length}</span><span class="level ${Q.lvl}">${Q.lvl}</span></div>
+  <p class="qtext">${rich(Q.q)}</p><pre class="code">${esc(Q.code)}</pre>`;
+  if(Q.given) html+=`<p class="given">${rich(Q.given.replace(/: (.*)$/, ": `$1`"))}</p>`;
+  html+=`<div class="opts ${answered?"answered":""}">`;
+  ord.forEach((oi,k)=>{
+    const [text,isOk,ex]=Q.opts[oi];
+    let cls=""; if(answered){ if(isOk) cls="correct"; else if(oi===ans) cls="wrong"; else cls="dim"; }
+    const tag = isOk ? "Correct." : (oi===ans ? "Your answer — incorrect." : "Incorrect.");
+    html+=`<div class="opt ${cls}"><button ${answered?"disabled":""} data-oi="${oi}"><span class="key">${LETTERS[k]}</span><span class="otext">${esc(text.replace(/\\n/g,"\n"))}</span></button>
+    <div class="expl"><span class="tag">${tag}</span>${rich(ex)}</div></div>`;
+  });
+  html+=`</div>`;
+  html+=`<div class="outbox ${answered?"show":""}"><h3>Actual output / value</h3><pre class="mono">${esc(Q.out)}</pre>${Q.note?`<p class="note">${rich(Q.note)}</p>`:""}</div>`;
+  const last = state.idx===S.qs.length-1, lastSubj = state.subj===SUBJECTS.length-1;
+  html+=`<div class="navrow"><button class="btn" id="prev" ${state.idx===0&&state.subj===0?"disabled":""}>Previous</button>
+    <span class="hint">Keys: 1–4 or A–D to answer, ← → to move</span>
+    <button class="btn primary" id="next">${last ? (lastSubj?"See results":"Next subject") : "Next question"}</button></div></section>`;
+  main.innerHTML=html;
+  main.querySelectorAll(".opt button").forEach(b=>b.onclick=()=>choose(+b.dataset.oi));
+  document.getElementById("prev").onclick=prev;
+  document.getElementById("next").onclick=next;
+}
+
+function choose(oi){
+  const id=qid(state.subj,state.idx);
+  if(state.answers[id]!==undefined) return;
+  state.answers[id]=oi; save(); render();
+}
+function next(){
+  const S=SUBJECTS[state.subj];
+  if(state.idx<S.qs.length-1) state.idx++;
+  else if(state.subj<SUBJECTS.length-1){ state.subj++; state.idx=0; }
+  else state.showSummary=true;
+  save(); render(); window.scrollTo({top:0});
+}
+function prev(){
+  if(state.showSummary){ state.showSummary=false; }
+  else if(state.idx>0) state.idx--;
+  else if(state.subj>0){ state.subj--; state.idx=SUBJECTS[state.subj].qs.length-1; }
+  save(); render();
+}
+
+function renderSummary(){
+  const lv=["trivial","simple","non-advanced","mixed"];
+  let rows="";
+  SUBJECTS.forEach((S,s)=>{
+    const by={}; lv.forEach(l=>by[l]=[0,0]); let ok=0,n=0;
+    S.qs.forEach((Q,i)=>{const a=state.answers[qid(s,i)]; by[Q.lvl][1]++; if(a!==undefined&&Q.opts[a][1]){by[Q.lvl][0]++;ok++;} if(a!==undefined)n++;});
+    rows+=`<tr><td>${esc(S.name)}</td>${lv.map(l=>`<td class="n">${by[l][0]}/${by[l][1]}</td>`).join("")}<td class="n"><b>${ok}</b>/${S.qs.length}</td></tr>`;
+  });
+  const t=totals();
+  document.getElementById("main").innerHTML=`<section class="summary"><h2>Results</h2>
+  <p>You answered ${t.n} of 70 questions and got <b>${t.ok}</b> right in ${fmt(state.seconds)}.</p>
+  <div class="tablewrap"><table><thead><tr><th>Subject</th>${lv.map(l=>`<th class="n">${l}</th>`).join("")}<th class="n">Total</th></tr></thead><tbody>${rows}</tbody></table></div>
+  <p class="note">Weak spot? Click that subject on the left to review it — your answers and the explanations stay visible.</p>
+  <div class="navrow"><button class="btn" id="back">Back to questions</button><button class="btn primary" id="again">Start over</button></div></section>`;
+  document.getElementById("back").onclick=()=>{state.showSummary=false;save();render();};
+  document.getElementById("again").onclick=reset;
+}
+
+function reset(){
+  if(!confirm("Clear all answers and start over?")) return;
+  state={subj:0,idx:0,answers:{},seconds:0,showSummary:false};
+  for(const k in orders) delete orders[k];
+  save(); render();
+}
+function render(){ renderNav(); state.showSummary?renderSummary():renderQuestion(); }
+
+const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+setInterval(()=>{ if(!document.hidden && !state.showSummary){ state.seconds++; document.getElementById("timer").textContent=fmt(state.seconds); if(state.seconds%10===0) save(); } },1000);
+document.getElementById("timer").textContent=fmt(state.seconds);
+
+document.addEventListener("keydown",e=>{
+  if(e.target.tagName==="INPUT"||e.metaKey||e.ctrlKey||e.altKey) return;
+  if(state.showSummary) return;
+  const k=e.key.toUpperCase();
+  let pos="1234".indexOf(k); if(pos<0) pos="ABCD".indexOf(k);
+  if(pos>=0 && k.length===1){ const id=qid(state.subj,state.idx); const ord=order(id,SUBJECTS[state.subj].qs[state.idx].opts.length); if(ord[pos]!==undefined) choose(ord[pos]); }
+  else if(e.key==="ArrowRight") next();
+  else if(e.key==="ArrowLeft") prev();
+});
+document.getElementById("summaryBtn").onclick=()=>{state.showSummary=true;save();render();};
+document.getElementById("resetBtn").onclick=reset;
+render();
+</script>
+</body>
+</html>

@@ -664,6 +664,275 @@ print(x)`, opts:[
   ["8", false, "The second `if` also runs, because 8 > 6."],
   ["3", false, "That would be 4 − 1. But x was doubled to 8 first."]],
   out:"7"}
+]},
+{ name:"for loops and range()", blurb:"repeating code a set number of times", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`for i in range(3):
+    print(i)`, opts:[
+  ["0\n1\n2", true, "`range(3)` gives 3 numbers starting at 0: 0, 1, 2. The loop body runs once for each of them."],
+  ["1\n2\n3", false, "`range` starts at 0 unless you give a start value, like counting indexes."],
+  ["0\n1\n2\n3", false, "The end number is not included: `range(3)` stops before 3."],
+  ["3", false, "`print(i)` is inside the loop, so it runs on every pass, not once at the end."]],
+  out:"0\n1\n2"},
+ {lvl:"trivial", q:"The loop variable is not used. What does this print?", code:`for i in range(3):
+    print("hi")`, opts:[
+  ["hi\nhi\nhi", true, "The body runs once per number in `range(3)`, so 3 times. It prints `\"hi\"` every time; `i` is just not used."],
+  ["hi", false, "The indented body repeats on every pass of the loop."],
+  ["0\n1\n2", false, "The code prints the text `\"hi\"`, not `i`."],
+  ["hihihi", false, "Each `print` ends with a newline, so every `hi` is on its own line."]],
+  out:"hi\nhi\nhi"},
+ {lvl:"trivial", q:"Looping over a string. What does this print?", code:`for ch in "cat":
+    print(ch)`, opts:[
+  ["c\na\nt", true, "A `for` loop over a string gives its characters one at a time."],
+  ["cat", false, "`ch` is one character per pass, and each is printed on its own line."],
+  ["0\n1\n2", false, "Looping over a string gives the characters, not their indexes."],
+  ["Error", false, "Strings can be looped over directly; `range` is not needed."]],
+  out:"c\na\nt"},
+ {lvl:"simple", q:"range with a start value. What does this print?", code:`for i in range(2, 5):
+    print(i)`, opts:[
+  ["2\n3\n4", true, "`range(2, 5)` starts at 2 and stops before 5."],
+  ["2\n3\n4\n5", false, "The end value is never included, same as with `range(5)`."],
+  ["3\n4\n5", false, "The start value is included."],
+  ["2\n5", false, "`range` gives every number in between, not just the two ends."]],
+  out:"2\n3\n4"},
+ {lvl:"simple", q:"How many lines does this print?", code:`for i in range(1, 6):
+    print("x")`, opts:[
+  ["5", true, "`range(1, 6)` is 1, 2, 3, 4, 5: five numbers. Quick rule: end minus start = 6 − 1 = 5."],
+  ["6", false, "6 is the end value, and the end is not included."],
+  ["4", false, "The start value 1 is included, so there are 5 numbers."],
+  ["1", false, "The `print` is inside the loop, so it runs on every pass."]],
+  out:"x\nx\nx\nx\nx"},
+ {lvl:"simple", q:"print with end inside a loop. What does this print?", code:`for i in range(4):
+    print(i, end=" ")`, opts:[
+  ["0 1 2 3", true, "`end=\" \"` replaces the newline with a space, so all numbers stay on one line."],
+  ["0\n1\n2\n3", false, "That is the default. Here `end` replaces the newline with a space."],
+  ["0123", false, "`end` is a space, not an empty string."],
+  ["1 2 3 4", false, "`range(4)` starts at 0."]],
+  out:"0 1 2 3 "},
+ {lvl:"non-advanced", q:"range with a step. What does this print?", code:`for i in range(0, 10, 3):
+    print(i)`, opts:[
+  ["0\n3\n6\n9", true, "The third value is the step: start at 0 and add 3 each time while the number is below 10."],
+  ["0\n3\n6", false, "9 is still below 10, so it is included."],
+  ["3\n6\n9", false, "The start value 0 is included."],
+  ["0\n3\n6\n9\n12", false, "12 is past the end (10), so it is not included."]],
+  out:"0\n3\n6\n9"},
+ {lvl:"non-advanced", q:"Watch the indentation. What does this print?", code:`for i in range(3):
+    print("in")
+print("out")`, opts:[
+  ["in\nin\nin\nout", true, "Only the indented line belongs to the loop. `print(\"out\")` is not indented, so it runs once, after the loop is finished."],
+  ["in\nout\nin\nout\nin\nout", false, "That would need `print(\"out\")` to be indented too."],
+  ["in\nin\nin\nout\nout\nout", false, "The unindented line is outside the loop and runs only once."],
+  ["in\nout", false, "The indented line runs on every pass: 3 times."]],
+  out:"in\nin\nin\nout"},
+ {lvl:"non-advanced", q:"Counting down. What does this print?", code:`for i in range(3, 0, -1):
+    print(i)`, opts:[
+  ["3\n2\n1", true, "Step `-1` counts down. It starts at 3 and stops before reaching the end value 0."],
+  ["3\n2\n1\n0", false, "The end value is excluded even when counting down, so 0 is not printed."],
+  ["(nothing)", false, "`range(3, 0)` without a step would be empty, but the step `-1` makes it count down."],
+  ["1\n2\n3", false, "The numbers come out in the order `range` makes them: from 3 downwards."]],
+  out:"3\n2\n1"},
+ {lvl:"mixed", q:"Indexes and characters together. What does this print?", code:`word = "abc"
+for i in range(len(word)):
+    print(i, word[i])`, opts:[
+  ["0 a\n1 b\n2 c", true, "`len(word)` is 3, so `i` is 0, 1, 2. `word[i]` is the character at that index, and `print` puts a space between the two values."],
+  ["1 a\n2 b\n3 c", false, "`range(3)` starts at 0, and so do string indexes."],
+  ["a 0\nb 1\nc 2", false, "The values print in the order they are written: `i` first, then `word[i]`."],
+  ["IndexError", false, "`range(len(word))` stops at 2, which is the last valid index. That is exactly why this pattern is safe."]],
+  out:"0 a\n1 b\n2 c"}
+]},
+{ name:"while loops", blurb:"repeating while a condition holds, break, continue", qs:[
+ {lvl:"trivial", q:"What does this print?", code:`n = 1
+while n <= 3:
+    print(n)
+    n = n + 1`, opts:[
+  ["1\n2\n3", true, "The condition is checked before each pass. When `n` becomes 4, `4 <= 3` is False and the loop stops."],
+  ["1\n2", false, "`<=` includes 3, so 3 is printed too."],
+  ["1\n2\n3\n4", false, "When `n` is 4 the condition is False, so the body does not run again."],
+  ["1", false, "`while` repeats as long as the condition is True; it is not a one-time `if`."]],
+  out:"1\n2\n3"},
+ {lvl:"trivial", q:"The condition is False from the start. What does this print?", code:`n = 10
+while n < 5:
+    print(n)
+    n += 1
+print("done")`, opts:[
+  ["done", true, "`10 < 5` is False before the first pass, so the body never runs. The program continues after the loop."],
+  ["10\ndone", false, "The condition is checked before the first pass too. A `while` loop can run zero times."],
+  ["It never stops", false, "The loop body never even starts."],
+  ["10", false, "The body is skipped, and `print(\"done\")` is outside the loop, so it runs."]],
+  out:"done"},
+ {lvl:"trivial", q:"What is n after the loop?", code:`n = 0
+while n < 3:
+    n += 1
+print(n)`, opts:[
+  ["3", true, "The loop stops as soon as the condition is False, which happens when `n` reaches 3."],
+  ["2", false, "When `n` is 2, `2 < 3` is still True, so it runs once more and `n` becomes 3."],
+  ["0", false, "The loop changes `n` on every pass."],
+  ["4", false, "When `n` is 3 the condition is False, so `n` is not increased again."]],
+  out:"3"},
+ {lvl:"simple", q:"Countdown. What does this print?", code:`n = 3
+while n > 0:
+    print(n)
+    n -= 1
+print("Go!")`, opts:[
+  ["3\n2\n1\nGo!", true, "`n` goes 3, 2, 1. When it reaches 0, `0 > 0` is False and the loop ends."],
+  ["3\n2\n1\n0\nGo!", false, "When `n` is 0 the condition is False, so 0 is never printed."],
+  ["2\n1\n0\nGo!", false, "`print(n)` comes before `n -= 1`, so the first number printed is 3."],
+  ["Go!", false, "`3 > 0` is True, so the loop body runs."]],
+  out:"3\n2\n1\nGo!"},
+ {lvl:"simple", q:"Something is missing. What happens?", code:`n = 1
+while n < 3:
+    print(n)`, opts:[
+  ["It prints 1 forever", true, "Nothing inside the loop changes `n`, so `n < 3` stays True for ever. This is an infinite loop."],
+  ["1\n2", false, "That needs `n += 1` inside the loop. Python does not increase `n` by itself."],
+  ["1", false, "The condition is checked again after every pass, and it is still True."],
+  ["Error", false, "The code is valid Python. It just never stops."]],
+  out:"1\n1\n1\n1\n… (never stops)",
+  note:"If a program never stops, press Ctrl+C to interrupt it. Every `while` loop needs something inside that eventually makes the condition False."},
+ {lvl:"simple", q:"Doubling. What does this print?", code:`x = 1
+while x < 20:
+    x = x * 2
+print(x)`, opts:[
+  ["32", true, "`x` goes 1 → 2 → 4 → 8 → 16 → 32. 16 is still below 20, so it doubles once more. Then `32 < 20` is False."],
+  ["16", false, "When `x` is 16, `16 < 20` is True, so the loop runs once more."],
+  ["20", false, "Doubling from 1 never gives exactly 20; the loop stops at the first value that is not below 20."],
+  ["64", false, "When `x` is 32 the condition is False, so it stops."]],
+  out:"32"},
+ {lvl:"non-advanced", q:"break. What does this print?", code:`n = 0
+while True:
+    n += 1
+    if n == 3:
+        break
+    print(n)`, opts:[
+  ["1\n2", true, "`while True` would run forever, but `break` exits the loop at once. When `n` is 3, `break` runs before `print`."],
+  ["1\n2\n3", false, "`break` comes before `print(n)`, so 3 is never printed."],
+  ["It never stops", false, "`while True` alone would, but `break` ends the loop when `n` is 3."],
+  ["0\n1\n2", false, "`n += 1` runs before `print`, so the first number printed is 1."]],
+  out:"1\n2"},
+ {lvl:"non-advanced", q:"continue. What does this print?", code:`n = 0
+while n < 5:
+    n += 1
+    if n == 3:
+        continue
+    print(n)`, opts:[
+  ["1\n2\n4\n5", true, "`continue` skips the rest of this pass and jumps back to the condition. Only the `print` for 3 is skipped."],
+  ["1\n2", false, "That is what `break` would do. `continue` skips one pass; `break` ends the loop."],
+  ["1\n2\n3\n4\n5", false, "When `n` is 3, `continue` skips `print(n)`."],
+  ["0\n1\n2\n4", false, "`n += 1` happens before `print`, so the numbers are 1 to 5."]],
+  out:"1\n2\n4\n5"},
+ {lvl:"non-advanced", q:"Which while loop prints the same as this for loop?", code:`for i in range(3):
+    print(i)`, opts:[
+  ["i = 0\nwhile i < 3:\n    print(i)\n    i += 1", true, "Start at 0, stop before 3, print and then add 1. This prints 0, 1, 2, exactly like `range(3)`."],
+  ["i = 0\nwhile i <= 3:\n    print(i)\n    i += 1", false, "`<=` includes 3, so this prints 0, 1, 2, 3."],
+  ["i = 1\nwhile i < 3:\n    print(i)\n    i += 1", false, "Starting at 1 prints only 1, 2."],
+  ["i = 0\nwhile i < 3:\n    i += 1\n    print(i)", false, "Adding 1 before printing gives 1, 2, 3."]],
+  out:"0\n1\n2",
+  note:"Use `for` when you know how many times to repeat; use `while` when you repeat until something happens."},
+ {lvl:"mixed", q:"The user types 4, then 5, then stop. What does this print?", code:`total = 0
+x = input()
+while x != "stop":
+    total += int(x)
+    x = input()
+print(total)`, given:"User types: 4, 5, stop (Enter after each)", opts:[
+  ["9", true, "Each line is converted with `int()` and added: 0 + 4 + 5 = 9. When `x` is `\"stop\"` the condition is False and the loop ends."],
+  ["45", false, "`int(x)` turns each line into a number, so `+=` adds numbers instead of joining text."],
+  ["ValueError", false, "`\"stop\"` is never passed to `int()`: the condition is checked first and ends the loop."],
+  ["4", false, "The loop reads a new line at the end of each pass, so 5 is added too."]],
+  out:"4\n5\nstop\n9"}
+]},
+{ name:"Loop patterns", blurb:"sum, count, build text; review of all", qs:[
+ {lvl:"trivial", q:"Adding up. What does this print?", code:`total = 0
+for i in range(1, 4):
+    total += i
+print(total)`, opts:[
+  ["6", true, "`total` grows on each pass: 0 + 1 = 1, 1 + 2 = 3, 3 + 3 = 6."],
+  ["3", false, "3 is the last value of `i`. `total` keeps the running sum."],
+  ["10", false, "That is 1 + 2 + 3 + 4, but `range(1, 4)` stops before 4."],
+  ["0", false, "`total += i` changes `total` on every pass."]],
+  out:"6"},
+ {lvl:"trivial", q:"Counting. What does this print?", code:`count = 0
+for ch in "banana":
+    if ch == "a":
+        count += 1
+print(count)`, opts:[
+  ["3", true, "The `if` lets `count` grow only for the letter `a`, and \"banana\" has three of them."],
+  ["6", false, "6 is the number of all letters. The `if` counts only the `a`s."],
+  ["1", false, "`count += 1` runs every time the letter is `a`, not just once."],
+  ["2", false, "Count again: b-a-n-a-n-a has `a` in three places."]],
+  out:"3"},
+ {lvl:"trivial", q:"Building text. What does this print?", code:`s = ""
+for i in range(3):
+    s = s + "*"
+print(s)`, opts:[
+  ["***", true, "`s` starts empty and gets one `*` added on each of the 3 passes."],
+  ["*\n*\n*", false, "`print(s)` is after the loop, so it runs once and prints the finished string."],
+  ["*", false, "`s` keeps what it had and adds a new `*` each time."],
+  ["(empty line)", false, "The loop changes `s` before it is printed."]],
+  out:"***"},
+ {lvl:"simple", q:"Same sum, but print is now inside the loop. What does this print?", code:`total = 0
+for i in range(1, 4):
+    total += i
+    print(total)`, opts:[
+  ["1\n3\n6", true, "The `print` is indented, so it shows the running total after every pass. Compare with the first question in this subject."],
+  ["6", false, "That happens when `print` is after the loop. Here it is inside."],
+  ["1\n2\n3", false, "It prints `total`, not `i`."],
+  ["6\n6\n6", false, "Each print shows the value at that moment, not the final one."]],
+  out:"1\n3\n6"},
+ {lvl:"simple", q:"Filtering with %. What does this print?", code:`for i in range(1, 7):
+    if i % 2 == 0:
+        print(i)`, opts:[
+  ["2\n4\n6", true, "`i % 2 == 0` is True for even numbers. `range(1, 7)` goes up to 6, so 6 is included."],
+  ["1\n3\n5", false, "Odd numbers have remainder 1, so for them the condition is False."],
+  ["2\n4", false, "`range(1, 7)` includes 6, which is even."],
+  ["0\n2\n4\n6", false, "The range starts at 1, so 0 is not checked."]],
+  out:"2\n4\n6"},
+ {lvl:"simple", q:"String repetition in a loop. What does this print?", code:`for i in range(1, 4):
+    print("#" * i)`, opts:[
+  ["#\n##\n###", true, "`\"#\" * i` repeats the character `i` times, and `i` is 1, then 2, then 3."],
+  ["###", false, "The `print` is inside the loop, so there is one line per pass."],
+  ["#\n#\n#", false, "The number of `#` grows because `i` grows."],
+  ["\n#\n##", false, "The range starts at 1, so the first line already has one `#`."]],
+  out:"#\n##\n###"},
+ {lvl:"non-advanced", q:"Finding the biggest. What does this print?", code:`biggest = 0
+for ch in "3917":
+    d = int(ch)
+    if d > biggest:
+        biggest = d
+print(biggest)`, opts:[
+  ["9", true, "`biggest` only changes when a larger digit comes: 0 → 3 → 9. Then 1 and 7 are smaller, so it stays 9."],
+  ["7", false, "7 is the last digit, but `biggest` changes only when the new digit is larger."],
+  ["3917", false, "The loop looks at one character at a time, and `int(ch)` is a single digit."],
+  ["TypeError", false, "`int(ch)` converts each character first, so `d > biggest` compares two numbers."]],
+  out:"9"},
+ {lvl:"non-advanced", q:"Adding to the front. What does this print?", code:`s = ""
+for ch in "abc":
+    s = ch + s
+print(s)`, opts:[
+  ["cba", true, "Each new character goes in front: \"a\" → \"ba\" → \"cba\". This reverses the string."],
+  ["abc", false, "That is `s = s + ch`. Here `ch` is put before `s`."],
+  ["c", false, "`s` keeps its old characters; the new one is just added in front."],
+  ["a", false, "`s` changes on every pass, so the last result includes all three characters."]],
+  out:"cba"},
+ {lvl:"non-advanced", q:"elif inside a loop. What does this print?", code:`for i in range(1, 7):
+    if i % 3 == 0:
+        print("fizz")
+    elif i % 2 == 0:
+        print("even")
+    else:
+        print(i)`, opts:[
+  ["1\neven\nfizz\neven\n5\nfizz", true, "Each pass goes through the chain once. For 6 both conditions are True, but `% 3` is checked first, so it prints `fizz`."],
+  ["1\neven\nfizz\neven\n5\neven", false, "6 is even, but `i % 3 == 0` comes first and is also True for 6."],
+  ["1\neven\nfizz\neven\n5\nfizz\neven", false, "Only one branch of the chain runs per pass, so 6 gives one line."],
+  ["1\n2\nfizz\n4\n5\nfizz", false, "2 and 4 are even, so the `elif` branch prints `even` for them."]],
+  out:"1\neven\nfizz\neven\n5\nfizz"},
+ {lvl:"mixed", q:"The user types 507. What does this print?", code:`num = input()
+total = 0
+for ch in num:
+    total += int(ch)
+print(num + "!", total)`, given:"User types: 507", opts:[
+  ["507! 12", true, "`num` is the string `\"507\"`. The loop adds its digits as numbers: 5 + 0 + 7 = 12. `num + \"!\"` joins two strings."],
+  ["507! 507", false, "`total` is built from the single digits, not from the whole number."],
+  ["TypeError", false, "`int(ch)` converts each digit before adding, and `num + \"!\"` is string + string."],
+  ["507 ! 12", false, "`+` joins with nothing in between. Only the comma in `print` adds a space."]],
+  out:"507\n507! 12"}
 ]}
 ];
 

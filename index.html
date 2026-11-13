@@ -177,14 +177,13 @@ a = 3`, opts:[
   ["a", false, "Without quotes, `a` is a name, not text."],
   ["0", false, "A variable does not start at 0. It does not exist at all until a value is stored in it."]],
   out:"NameError: name 'a' is not defined"},
- {lvl:"non-advanced", q:"One name gets its value from another. What does this print?", code:`a = 4
-b = a
-print(b)`, opts:[
-  ["4", true, "`b = a` is read \"b gets a\": Python looks up the value of `a` (4) and stores it under `b`."],
-  ["a", false, "`a` has no quotes, so it is the name, and its value 4 is what `b` gets."],
-  ["b", false, "`print(b)` shows the value stored under `b`, not the name."],
-  ["4 4", false, "`b` holds a single value, 4."]],
-  out:"4"},
+ {lvl:"non-advanced", q:"Which line, placed before this one, makes it print 12?", code:`print(my_age)`, opts:[
+  ["my_age = 12", true, "The name on the left matches the name in `print` exactly, so `print(my_age)` finds the value 12. Use `_` to join words in a name."],
+  ["my age = 12", false, "A name cannot contain spaces. Python reads `my` and `age` as two separate words, and this is a SyntaxError."],
+  ["\"my_age\" = 12", false, "With quotes, `\"my_age\"` is text, not a name, and you cannot store a value in text. This is a SyntaxError."],
+  ["My_age = 12", false, "Capital letters matter: `My_age` and `my_age` are two different names. `print(my_age)` would give a NameError."]],
+  out:"12",
+  note:"Names may use letters, digits and `_`, but no spaces, and they cannot start with a digit. Capital and small letters count as different."},
  {lvl:"non-advanced", q:"Using a variable without storing. What does this print?", code:`a = 3
 print(a + 2)
 print(a)`, opts:[

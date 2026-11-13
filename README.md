@@ -85,11 +85,11 @@ Repetition is written into the questions themselves:
   - `a = 1 + 2` stores the result, 3, not the calculation.
   - The name must be on the left: `5 = x` is an error.
   - Lines run top to bottom, so a name cannot be used before it gets a value.
-  - `b = a` gives `b` the value of `a`.
+  - Naming rules: no spaces (use `_`), no quotes around a name, capital letters count.
   - Using a variable in a calculation (`print(a + 2)`) does not change it; only `=` does.
   - A name is only a label: `red = "blue"` prints `blue`.
   - The last question turns `7 + a = 9` into working code: you solve it, Python computes `a = 9 - 7`.
-- Giving a name a new value (`x = 5`, then `x = 8`) and changing it step by step (`a = a + 1`) are left to subject 6, Tracing variables. Comparing with `==` is left to subject 4, Logical operations.
+- Giving a name a new value (`x = 5`, then `x = 8`), copying (`b = a`) and changing a value step by step (`a = a + 1`) are left to subject 6, Tracing variables. Comparing with `==` is left to subject 4, Logical operations.
 - The first questions have no "Error" option, because a beginner has no idea yet what an error would be.
 - Away from the screen, the same ideas work with labelled cups and paper slips. Each cup holds one slip. Storing a new value means throwing the old slip away. `b = a` means writing a copy, not connecting the cups.
 

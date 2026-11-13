@@ -149,14 +149,14 @@ print("a")`, opts:[
   ["\"a\"", false, "The quotes only mark where the text starts and ends. They are not printed."],
   ["a = 5", false, "`print` shows only what is inside its brackets: here the text `a`."]],
   out:"a"},
- {lvl:"trivial", q:"A new value for the same name. What does this print?", code:`name = "Ann"
-name = "Bob"
-print(name)`, opts:[
-  ["Bob", true, "A variable holds one value at a time. `name = \"Bob\"` throws away `\"Ann\"` and stores `\"Bob\"` instead."],
-  ["Ann", false, "The second line replaces the first value."],
-  ["Ann Bob", false, "A variable does not collect values; it keeps only the latest one."],
-  ["AnnBob", false, "`=` stores a new value. It does not join it to the old one."]],
-  out:"Bob"},
+ {lvl:"trivial", q:"Two names. What does this print?", code:`a = 5
+b = 7
+print(b)`, opts:[
+  ["7", true, "Each name has its own value: `a` holds 5 and `b` holds 7. `print(b)` shows the value stored under `b`."],
+  ["5", false, "5 is stored under `a`. Here the code prints `b`."],
+  ["5 7", false, "`print(b)` shows only the value of `b`."],
+  ["b", false, "Without quotes, `b` is a name, so Python prints its value."]],
+  out:"7"},
  {lvl:"simple", q:"A calculation on the right. What does this print?", code:`a = 1 + 2
 print(a)`, opts:[
   ["3", true, "Python first works out the right side, 1 + 2 = 3, and then stores the result in `a`. Read it as \"a gets 1 + 2\"."],
